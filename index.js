@@ -7,6 +7,7 @@ const app = express()
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 app.use(cors())
+app.use(express.static('build'))
 
 morgan.token('body', function(request, response) {
   if (request.body.name) {
@@ -16,7 +17,7 @@ morgan.token('body', function(request, response) {
   }
 })
 
-let numbers = [
+let persons = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -42,18 +43,18 @@ let numbers = [
 app.get('/info', (request, response) => {
   const date = new Date()
   response.send(
-    `<p>Phonebook has info for ${numbers.length} people</p>
+    `<p>Phonebook has info for ${persons.length} people</p>
     <p>${date}</p>`
   )
 })
 
-app.get('/api/numbers', (request, response) => {
-  response.json(numbers)
+app.get('/api/persons', (request, response) => {
+  response.json(persons)
 })
 
-app.get('/api/numbers/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
-  const person = numbres.find(person => person.id === id)
+  const person = persons.find(person => person.id === id)
 
   if (person) {
     response.json(person)
@@ -63,16 +64,16 @@ app.get('/api/numbers/:id', (request, response) => {
   //console.log(person)
 })
 
-app.delete('/api/numbers/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
-  numbers = numbers.filter(number => number.id !== id)
+  persons = persons.filter(person => person.id !== id)
 
   response.status(204).end()
 })
 
-app.post('/api/numbers', (request, response) => {
+app.post('/api/persons', (request, response) => {
   const body = request.body
-  const names = numbers.map(number => number.name)
+  const names = persons.map(person => person.name)
 
   if (!body.name) {
     return response.status(400).json({
@@ -88,15 +89,15 @@ app.post('/api/numbers', (request, response) => {
     })
   }
 
-  const number = {
+  const person = {
     id: generateId(),
     name: body.name,
     number: body.number
   }
 
-  numbers = numbers.concat(number)
-  //console.log(number)
-  response.json(number)
+  persons = persons.concat(person)
+  //console.log(person)
+  response.json(person)
 })
 
 const generateId = () => {
