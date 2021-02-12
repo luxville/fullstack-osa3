@@ -1,3 +1,4 @@
+const { response } = require('express')
 const mongoose = require('mongoose')
 
 if (process.argv.length < 3) {
@@ -24,9 +25,25 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', personSchema)
 
-Person.find({}).then(result => {
-  result.forEach(person => {
-    console.log(person)
+if (process.argv.length === 5) {
+  const newName = process.argv[3]
+  const newNumber = process.argv[4]
+
+  const person = new Person({
+    name: newName,
+    number: newNumber
   })
-  mongoose.connect.close()
+
+  person.save().then(response => {
+    console.log(`added ${person.name} number ${person.number} to phonebook`)
+    mongoose.connection.close()
+  })
+}
+
+Person.find({}).then(result => {
+  console.log('phonebook:')
+  result.forEach(person => {
+    console.log(person.name, person.number)
+  })
+  mongoose.connection.close()
 })
