@@ -21,15 +21,11 @@ morgan.token('body', function(request, response) {
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-if (process.argv.length < 3) {
-  console.log('give password as argument')
-  process.exit(1)
-}
-
 app.get('/info', (request, response) => {
   const date = new Date()
+  const count = Person.count()
   response.send(
-    `<p>Phonebook has info for ${persons.length} people</p>
+    `<p>Phonebook has info for ${count} people</p>
     <p>${date}</p>`
   )
 })
@@ -80,10 +76,10 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  const person = {
+  const person = new Person({
     name: body.name,
     number: body.number
-  }
+  })
 
   person.save().then(savedPerson => {
     response.json(savedPerson)
