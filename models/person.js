@@ -10,7 +10,7 @@ mongoose.connect(url, {
   useUnifiedTopology: true,
   useFindAndModify: false,
   useCreateIndex: true
-}).then(result => {
+}).then(() => {
   console.log('connected to MongoDB')
 }).catch((error) => {
   console.log('error connecting to MongoDB:', error.message)
@@ -19,6 +19,7 @@ mongoose.connect(url, {
 const personSchema = new mongoose.Schema({
   name: {
     type: String,
+    unique: true,
     minlength: 3,
     required: true
   },

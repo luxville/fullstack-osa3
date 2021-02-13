@@ -1,4 +1,3 @@
-const { response } = require('express')
 const mongoose = require('mongoose')
 
 if (process.argv.length < 3) {
@@ -34,7 +33,7 @@ if (process.argv.length === 5) {
     number: newNumber
   })
 
-  person.save().then(response => {
+  person.save().then(() => {
     console.log(`added ${person.name} number ${person.number} to phonebook`)
     mongoose.connection.close()
   })
