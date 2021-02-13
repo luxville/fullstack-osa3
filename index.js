@@ -9,13 +9,13 @@ app.use(express.static('build'))
 app.use(express.json())
 app.use(cors())
 
-const requestLogger = (request, response, next) => {
+/*const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
   console.log('Path:  ', request.path)
   console.log('Body:  ', request.body)
   console.log('----')
   next()
-}
+}*/
 
 morgan.token('body', (request) => {
   if (request.body.name) {
@@ -25,7 +25,7 @@ morgan.token('body', (request) => {
   }
 })
 
-app.use(requestLogger)
+//app.use(requestLogger)
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 app.get('/info', (request, response) => {
@@ -92,20 +92,20 @@ const generateId() = () => {
 app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
 
-  if (!body.name || !body.number) {
+  if (body.name.length < 1 || body.number.length < 1) {
     return response.status(400).json({ error: 'name or number missing' })
   }
-  
+
   const person = ({
     name: body.name,
     number: body.number
   })
 
   Person.findByIdAndUpdate(request.params.id, person, {
-      new: true,
-      runValidators: true,
-      context: 'query'
-    })
+    new: true,
+    runValidators: true,
+    context: 'query'
+  })
     .then((updatedPerson) => {
       console.log(`Updated: ${updatedPerson}`)
       response.json(updatedPerson.toJSON())
@@ -128,7 +128,7 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
   }
-  next(error)
+  return next(error)
 }
 
 app.use(errorHandler)
